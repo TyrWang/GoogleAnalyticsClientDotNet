@@ -1,9 +1,9 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Linq;
 using System.Management;
-using System.Windows.Input;
 using System.Threading;
+using System.Windows.Input;
+using Microsoft.Win32;
 
 namespace GoogleAnalyticsClientDotNet.Utility
 {
@@ -142,8 +142,9 @@ namespace GoogleAnalyticsClientDotNet.Utility
                 {
                     //execute the query
                     ManualResetEvent mre = new ManualResetEvent(false);
-                    Thread waitingThread = new Thread(() => {
-                        foreach (System.Management.ManagementObject process in searcher.Get())
+                    Thread waitingThread = new Thread(() =>
+                    {
+                        foreach (ManagementObject process in searcher.Get())
                         {
                             //print system info
                             process.Get();
