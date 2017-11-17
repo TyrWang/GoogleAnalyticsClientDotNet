@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Management;
 using System.Windows.Input;
+using System.Threading;
 
 namespace GoogleAnalyticsClientDotNet.Utility
 {
@@ -31,7 +32,7 @@ namespace GoogleAnalyticsClientDotNet.Utility
         public string ModelName
         {
             get; private set;
-        }
+        } = "Not found";
 
         public string Name
         {
@@ -56,7 +57,7 @@ namespace GoogleAnalyticsClientDotNet.Utility
         public string SystemManufacturer
         {
             get; private set;
-        }
+        } = "Not found";
 
         private static string uniqueId;
         public string UniqueId
@@ -137,13 +138,26 @@ namespace GoogleAnalyticsClientDotNet.Utility
             //initialize the searcher with the query it is supposed to execute
             using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
             {
-                //execute the query
-                foreach (System.Management.ManagementObject process in searcher.Get())
+                try
                 {
-                    //print system info
-                    process.Get();
-                    SystemManufacturer = $"{process["Manufacturer"]}";
-                    ModelName = $"{process["Model"]}";
+                    //execute the query
+                    ManualResetEvent mre = new ManualResetEvent(false);
+                    Thread waitingThread = new Thread(() => {
+                        foreach (System.Management.ManagementObject process in searcher.Get())
+                        {
+                            //print system info
+                            process.Get();
+                            SystemManufacturer = $"{process["Manufacturer"]}";
+                            ModelName = $"{process["Model"]}";
+                        }
+                        mre.Set();
+                    });
+                    waitingThread.Start();
+                    mre.WaitOne(5000); // wait 5 seconds
+                }
+                catch (Exception)
+                {
+
                 }
             }
         }
