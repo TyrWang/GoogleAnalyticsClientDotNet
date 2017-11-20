@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Management;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Win32;
 
@@ -140,9 +140,7 @@ namespace GoogleAnalyticsClientDotNet.Utility
             {
                 try
                 {
-                    //execute the query
-                    ManualResetEvent mre = new ManualResetEvent(false);
-                    Thread waitingThread = new Thread(() =>
+                    Task.Run(() =>
                     {
                         foreach (ManagementObject process in searcher.Get())
                         {
@@ -151,10 +149,8 @@ namespace GoogleAnalyticsClientDotNet.Utility
                             SystemManufacturer = $"{process["Manufacturer"]}";
                             ModelName = $"{process["Model"]}";
                         }
-                        mre.Set();
-                    });
-                    waitingThread.Start();
-                    mre.WaitOne(5000); // wait 5 seconds
+                    }
+                    );
                 }
                 catch (Exception)
                 {
