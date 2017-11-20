@@ -32,7 +32,7 @@ namespace GoogleAnalyticsClientDotNet.Utility
         public string ModelName
         {
             get; private set;
-        } = "Not found";
+        } = string.Empty;
 
         public string Name
         {
@@ -57,7 +57,7 @@ namespace GoogleAnalyticsClientDotNet.Utility
         public string SystemManufacturer
         {
             get; private set;
-        } = "Not found";
+        } = string.Empty;
 
         private static string uniqueId;
         public string UniqueId
